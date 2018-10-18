@@ -1,32 +1,39 @@
 (function( $ ) {
 	'use strict';
 
-	/**
-	 * All of the code for your public-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
-	 */
+	$(function(){
+		$(document).on('submit', 'form.muform', function(){
+			if (confirm('確定送出資料嗎？')) {
+				$('form.muform input[type=submit]').prop('disabled', true);
+				$.ajax({
+					async: true, //mimic POST use false
+					type: 'POST',
+					url: muforms.ajaxurl,
+					data: {
+						action: 'ajax_submit_func',
+						inputs: $(this).serialize(),
+					},
+					dataType: 'JSON',
+					success: function(res) {
+						alert(res.text);
+						if (res.code == '0'){
+							//do sth when err...
+						}
+						if (res.code == '1'){
+							$('form.muform')[0].reset();
+						}
+						grecaptcha.reset();
+						$('form.muform input[type=submit]').prop('disabled', false);
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						alert(ajaxOptions+':'+thrownError);
+						grecaptcha.reset();
+						$('form.muform input[type=submit]').prop('disabled', false);
+					}
+				});	
+			}
+			return false;
+		});
+	});
 
 })( jQuery );

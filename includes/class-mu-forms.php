@@ -157,6 +157,10 @@ class Mu_Forms {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_options_init' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+		$this->loader->add_action( 'wp_ajax_ajax_submit_func', $plugin_admin, 'ajax_submit_func');
+		$this->loader->add_action( 'wp_ajax_nopriv_ajax_submit_func', $plugin_admin, 'ajax_submit_func'); 
 	}
 
 	/**
@@ -173,6 +177,7 @@ class Mu_Forms {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'wp', $plugin_public, 'add_shortcodes');
 	}
 
 	/**

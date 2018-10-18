@@ -73,7 +73,7 @@ class Mu_Forms_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/mu-forms-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/mu-forms-public.css', array(), filemtime( plugin_dir_path(__FILE__) . 'css/mu-forms-public.css'), 'all' );
 
 	}
 
@@ -96,8 +96,45 @@ class Mu_Forms_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/mu-forms-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/mu-forms-public.js', array( 'jquery' ), filemtime( plugin_dir_path(__FILE__) . 'js/mu-forms-public.js'), false );
+		wp_enqueue_script( 'recaptcha', 'https://www.google.com/recaptcha/api.js');
 
+		wp_localize_script( $this->plugin_name, 'muforms', array('ajaxurl' => admin_url('admin-ajax.php')) );
+	}
+
+	public function add_shortcodes() {
+		add_shortcode( 'muform', array($this, 'muform_func') );
+	}
+
+	public function muform_func($atts) {
+		$atts = shortcode_atts( array(
+			'id' => 1,
+		), $atts, 'muform' );
+	
+		$google_recaptcha_site_key = '6LfAo3UUAAAAAMY3c_OV0Z1n6gLw7WV_7TWOs37W';
+
+		$form_content = $atts['id'];
+		$form_content .= '
+			<form class="muform" method="POST">
+				<table>
+				<tr>
+					<td>
+						<div>發票號碼 <input type="text" name="invoice_en" placeholder="英文 2 碼"> <input type="text" name="invoice_num" placeholder="數字 8 碼"></div>
+						<div>姓名 <input type="text" name="user_name"></div>
+						<div>手機 <input type="mobile" name="user_mobile"></div>
+						<div>驗證碼 <div class="g-recaptcha" data-sitekey="'.$google_recaptcha_site_key.'"></div> </div>
+					</td>
+					<td>
+						<div><label><input type="checkbox" name="agree1"> 我已瞭解並同意抽獎活動辦法</label></div>
+						<div><label><input type="checkbox" name="agree2"> 我已瞭解並同意個資蒐集及使用規定</label></div>
+						<div><label><input type="checkbox" name="agree3"> 本次所填寫之資料將作為會員資料之修正</label></div>
+						<div><input type="submit" data-muform="'.$atts['id'].'" value="送出資料"></div>
+					</td>
+				</tr>
+				</table>
+			</form>
+		';
+		return $form_content;
 	}
 
 }

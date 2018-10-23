@@ -59,6 +59,11 @@ register_activation_hook( __FILE__, 'activate_mu_forms' );
 register_deactivation_hook( __FILE__, 'deactivate_mu_forms' );
 
 /**
+ * Autoloader
+ */
+require plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+
+/**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */

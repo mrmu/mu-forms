@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the core plugin class
  *
@@ -78,7 +77,6 @@ class Mu_Forms {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -157,7 +155,10 @@ class Mu_Forms {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'export_to_xls_check');
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_options_init' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'add_mf_metabox' );
+		$this->loader->add_action( 'save_post', $plugin_admin, 'save_mf_metabox' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
 		$this->loader->add_action( 'wp_ajax_ajax_submit_func', $plugin_admin, 'ajax_submit_func');
 		$this->loader->add_action( 'wp_ajax_nopriv_ajax_submit_func', $plugin_admin, 'ajax_submit_func'); 
@@ -178,6 +179,9 @@ class Mu_Forms {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'wp', $plugin_public, 'add_shortcodes');
+		$this->loader->add_action( 'init', $plugin_public, 'create_post_type');
+		$this->loader->add_action( 'init', $plugin_public, 'create_taxonomy');
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_cpt_view');
 	}
 
 	/**

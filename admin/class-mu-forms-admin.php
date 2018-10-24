@@ -178,15 +178,22 @@ class Mu_Forms_Admin {
 
 	public function add_mf_metabox() {
 		//$id, $title, $callback, $page, $context, $priority, $callback_args
-		add_meta_box('muform_fields', 'Mu Form Fields', array($this, 'muform_metabox_func'), 'muform', 'normal', 'high');
+		add_meta_box('muform_fields', 'Mu Form Settings', array($this, 'muform_metabox_func'), 'muform', 'normal', 'high');
 	}
 
 	public function muform_metabox_func() {
-		
+
 		global $post;
 		$muform_fields =   get_post_meta($post->ID, 'muform_fields', true);
+		$google_recap_secret = isset($muform_fields['google_recap_secret']) ? $muform_fields['google_recap_secret']:'';
 		?>
 		<div class="input_fields_wrap">
+			<div>
+				Google reCaptcha Secret：<input type="text" name="muform_fields[google_recap_secret]" value="<?php echo $google_recap_secret;?>" style="width:500px;" />
+			</div>
+			<div>
+				Field Settings：
+			</div>
 			<?php
 			if(isset($muform_fields) && is_array($muform_fields)) {
 				for($i = 0; $i < sizeof($muform_fields['name']); $i++) {
@@ -209,7 +216,7 @@ class Mu_Forms_Admin {
 				}
 			}
 			?>
-			<a class="add_field_button button-secondary">Add Field</a>
+			<a class="add_field_button button-secondary"><?php echo 'Add one field';?></a>
 			<div>
 				<input type="text" name="muform_fields[name][]" placeholder="name">
 				<input type="text" name="muform_fields[require][]" placeholder="require, true/false"/>
@@ -242,6 +249,10 @@ class Mu_Forms_Admin {
 			echo sizeof($pre_save_fields['name']);
 			
 			$to_save_fields = array();
+			if (isset($pre_save_fields['google_recap_secret']) && $pre_save_fields['google_recap_secret']) {
+				$to_save_fields['google_recap_secret'] = $pre_save_fields['google_recap_secret'];
+			}
+
 			for ($i = 0; $i < sizeof($pre_save_fields['name']); $i++) {
 				if (!empty($pre_save_fields['name'][$i])){
 					$to_save_fields['name'][] = $pre_save_fields['name'][$i];
@@ -290,7 +301,9 @@ class Mu_Forms_Admin {
 			die();			
 		}
 
-		$google_recaptcha_secret = '6LfAo3UUAAAAAPKN6mU6ZEUlgrSJ4d9D3DHdaKIi';
+		$muform_fields = get_post_meta($muform_post->ID, 'muform_fields', true);
+		$google_recaptcha_secret = $muform_fields['google_recap_secret'];
+		// $google_recaptcha_secret = '6LfAo3UUAAAAAPKN6mU6ZEUlgrSJ4d9D3DHdaKIi';
 		$response = wp_remote_get( add_query_arg( array(
 			'secret'   => $google_recaptcha_secret,
 			'response' => isset( $inputs['g-recaptcha-response'] ) ? $inputs['g-recaptcha-response'] : '',
@@ -300,7 +313,6 @@ class Mu_Forms_Admin {
 		if ( is_wp_error( $response ) || empty( $response['body'] ) || ! ( $json = json_decode( $response['body'] ) ) || ! $json->success ) {
 			$msg = 'reCaptcha 驗證失敗，請勾選 "我不是機器人" 並通過驗證。';
 		}else{
-			$muform_fields = get_post_meta($muform_post->ID, 'muform_fields', true);
 			$ary_name = $muform_fields['name'];
 			$ary_require = $muform_fields['require'];
 			$ary_type = $muform_fields['type'];
@@ -457,8 +469,8 @@ class Mu_Forms_Admin {
 		$title =  __( 'Mu Forms', $this->plugin_name );
 		$tabs = array (
 			'options'		=>	__( 'General', $this->plugin_name ),
-			'content'		=>	__( 'Content', $this->plugin_name ),
-			'style'		=>	__( 'Style', $this->plugin_name )
+			// 'content'		=>	__( 'Content', $this->plugin_name ),
+			// 'style'		=>	__( 'Style', $this->plugin_name )
 		);
 		?>
 		<div class="wrap">
@@ -476,15 +488,15 @@ class Mu_Forms_Admin {
 						// register_setting: muforms_options, muforms_content, muforms_style
 						settings_fields( 'muforms_' . strtolower ( $current ) );
 						do_settings_sections( 'muforms_' . strtolower ( $current ) );
-						submit_button();
+						// submit_button();
 						?>
 					</form>
-					<form action="" method="POST">
+					<!-- <form action="" method="POST">
 						<p class="submit">
 							<input name="reset" class="button button-secondary" type="submit" value="<?php _e( 'Reset this tab controls to defaults', $this->plugin_name ); ?>" >
 							<input type="hidden" name="action" value="reset" />
 						</p>
-					</form>
+					</form> -->
 				</div><!-- .inner-wrap -->
 			</div><!-- .outer-wrap -->
 		</div><!-- .wrap -->
@@ -502,27 +514,19 @@ class Mu_Forms_Admin {
 			'muforms_options'
 		);
 
-		add_settings_field (
-			'enable',
-			__( 'Enable', $this->plugin_name ),
-			array ( $this, 'enable_checkbox' ),
-			'muforms_options',
-			'muforms_options_section'
-		);
+		// add_settings_field (
+		// 	'enable',
+		// 	__( 'Enable', $this->plugin_name ),
+		// 	array ( $this, 'enable_checkbox' ),
+		// 	'muforms_options',
+		// 	'muforms_options_section'
+		// );
 
 		add_settings_field(
 			'muform_select', 
-			__('Mu Form Select', $this->plugin_name ), 
+			__('Export Mu Form', $this->plugin_name ), 
 			array( $this, 'muform_select_box'), 
 			'muforms_options', 
-			'muforms_options_section'
-		);
-
-		add_settings_field (
-			'cookie_expiry',
-			__( 'Cookie Expiry', $this->plugin_name ),
-			array ( $this, 'cookie_expiry_render' ),
-			'muforms_options',
 			'muforms_options_section'
 		);
 		
@@ -537,9 +541,7 @@ class Mu_Forms_Admin {
 
 	public function validate($input) {
 		$valid = array();
-		$valid['enable'] = (isset($input['enable']) && !empty($input['enable'])) ? 1 : 0;
-		$valid['cookie_expiry'] = (isset($input['cookie_expiry'])) ? absint($input['cookie_expiry']) : 9999;
-		$valid['accept_once_disable_forever'] = (isset($input['accept_once_disable_forever']) && !empty($input['accept_once_disable_forever'])) ? 1 : 0;
+		// $valid['enable'] = (isset($input['enable']) && !empty($input['enable'])) ? 1 : 0;
 		return $valid;
 	}
 
@@ -547,9 +549,7 @@ class Mu_Forms_Admin {
 
 	public function get_default_options_settings() {
 		$defaults = array (
-			'enable' 		=> 0,
-			'cookie_expiry'	=> 9999,
-			'accept_once_disable_forever' => 0
+			// 'enable' 		=> 0,
 		);
 		return $defaults;
 	}
@@ -557,25 +557,10 @@ class Mu_Forms_Admin {
 	// Settings Callback
 
 	public function settings_section_callback() {
-		echo '<p>' . __( 'Basic settings', $this->plugin_name ) . '</p>';
-		echo '<p>' . __( 'After user close the notibar in front of site, he or she dose accept cookie and then notibar will gone.', $this->plugin_name). '</p>';
+		// echo '<p>' . __( 'Basic settings', $this->plugin_name ) . '</p>';
 	}
 
 	// Controls render
-
-	public function enable_checkbox() {
-		$options = get_option( 'muforms_options_settings' );
-		$enable = $options['enable'];
-		?>
-        <fieldset>
-            <legend class="screen-reader-text"><span><?php _e('Enable', $this->plugin_name);?></span></legend>
-            <label for="enable-checkbox">
-                <input type="checkbox" id="enable-checkbox" name="muforms_options_settings[enable]" value="1" <?php checked($enable, 1); ?>/>
-                <span><?php esc_attr_e('Enable and show notification bar?', $this->plugin_name); ?></span>
-            </label>
-        </fieldset>
-		<?php
-	}
 
 	public function muform_select_box() {
 		?>
@@ -600,12 +585,5 @@ class Mu_Forms_Admin {
 		<button type="button" name="export_xls" class="btn_export_xls button button-primary" value="export_xls">Export to XLS</button>
 	   <?php
 	}
-	
-	public function cookie_expiry_render() {
-		$options = get_option( 'muforms_options_settings' ); ?>
-		<input type="number" min="1" name="muforms_options_settings[cookie_expiry]" value="<?php echo esc_attr( $options['cookie_expiry'] ); ?>">
-		<p class="description"><?php _e( 'Setting the number of expired days that the cookie is set for and once the cookie is expired, the notification bar will show again.', $this->plugin_name ); ?></p>
-	<?php
-	}	
 
 }

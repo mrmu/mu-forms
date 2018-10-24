@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Mu Forms\n"
-"POT-Creation-Date: 2018-10-24 18:24+0800\n"
-"PO-Revision-Date: 2018-10-24 18:24+0800\n"
+"POT-Creation-Date: 2018-10-24 19:57+0800\n"
+"PO-Revision-Date: 2018-10-24 19:58+0800\n"
 "Last-Translator: Audi Lu <mrmu@mrmu.com.tw>\n"
 "Language-Team: Audi Lu <mrmu@mrmu.com.tw>\n"
 "Language: zh_TW\n"
@@ -20,6 +20,10 @@ msgstr ""
 "_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: admin/class-mu-forms-admin.php:181
+msgid "Mu Form Settings"
+msgstr "Mu Form 設定"
 
 #: admin/class-mu-forms-admin.php:192
 msgid "Google reCaptcha Secret："
@@ -80,8 +84,8 @@ msgid "General settings"
 msgstr "一般設定"
 
 #: admin/class-mu-forms-admin.php:488
-msgid "Export Mu Form"
-msgstr "匯出 Mu Form"
+msgid "Export submitted data of Mu Form"
+msgstr "匯出提交給 Mu Form 的資料"
 
 #: admin/class-mu-forms-admin.php:529
 msgid "Please select"

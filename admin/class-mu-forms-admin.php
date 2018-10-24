@@ -485,7 +485,7 @@ class Mu_Forms_Admin {
 
 		add_settings_field(
 			'muform_select', 
-			__('Export Mu Form', $this->plugin_name ), 
+			__('Export submitted data of Mu Form', $this->plugin_name ), 
 			array( $this, 'muform_select_box'), 
 			'muforms_options', 
 			'muforms_options_section'

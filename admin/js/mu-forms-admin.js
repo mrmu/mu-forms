@@ -11,13 +11,13 @@
 				x++; //text box increment
 				$('.input_fields_wrap').append(
 					'<div>'+
-						'<input type="text" name="muform_fields[name][]" placeholder="name"/>'+
+						'<input type="text" name="muform_fields[name][]" placeholder="name" style="width:100px;"/>'+
 						'<input type="text" name="muform_fields[require][]" placeholder="require"/>'+
 						'<input type="text" name="muform_fields[type][]" placeholder="type"/>'+
-						'<input type="text" name="muform_fields[limit_num][]" placeholder="limit_num"/>'+
+						'<input type="text" name="muform_fields[limit_num][]" placeholder="limit_num" style="width:80px;"/>'+
 						'<input type="text" name="muform_fields[require_msg][]" placeholder="require_msg"/>'+
 						'<input type="text" name="muform_fields[export_title][]" placeholder="export_title"/>'+
-						'<a href="#" class="remove_field">Remove</a>'+
+						'<a href="#" class="button remove_field">X</a>'+
 					'</div>'
 				); //add input box
 			}
@@ -33,7 +33,6 @@
 		$(document).on('click', '.btn_export_xls', function(e) {
 			var muform_id = $('#select_muform').val();
 			if (muform_id != 0) {
-				alert(muform_id);
 				var wnd = window.open(muforms_adm.adm_muform_url+'&export_xls='+muform_id);
 				// setTimeout(function() {
 				// 	wnd.close();

@@ -178,7 +178,7 @@ class Mu_Forms_Admin {
 
 	public function add_mf_metabox() {
 		//$id, $title, $callback, $page, $context, $priority, $callback_args
-		add_meta_box('muform_fields', 'Mu Form Settings', array($this, 'muform_metabox_func'), 'muform', 'normal', 'high');
+		add_meta_box('muform_fields', __('Mu Form Settings', $this->plugin_name), array($this, 'muform_metabox_func'), 'muform', 'normal', 'high');
 	}
 
 	public function muform_metabox_func() {
@@ -189,10 +189,10 @@ class Mu_Forms_Admin {
 		?>
 		<div class="input_fields_wrap">
 			<div>
-				Google reCaptcha Secret：<input type="text" name="muform_fields[google_recap_secret]" value="<?php echo $google_recap_secret;?>" style="width:500px;" />
+				<?php _e('Google reCaptcha Secret：', $this->plugin_name);?><input type="text" name="muform_fields[google_recap_secret]" value="<?php echo $google_recap_secret;?>" style="width:500px;" />
 			</div>
-			<div>
-				Field Settings：
+			<div style="margin-top:20px;">
+				<?php _e('Field Settings：', $this->plugin_name);?>
 			</div>
 			<?php
 			if(isset($muform_fields) && is_array($muform_fields)) {
@@ -216,12 +216,13 @@ class Mu_Forms_Admin {
 				}
 			}
 			?>
-			<a class="add_field_button button-secondary"><?php echo 'Add one field';?></a>
+			<div style="margin-top:20px;"></div>
+			<a class="add_field_button button-secondary"><?php _e('Add one field setting', $this->plugin_name);?></a>
 			<div>
-				<input type="text" name="muform_fields[name][]" placeholder="name">
+				<input type="text" name="muform_fields[name][]" placeholder="name" style="width:100px;">
 				<input type="text" name="muform_fields[require][]" placeholder="require, true/false"/>
 				<input type="text" name="muform_fields[type][]" placeholder="type, alphabet/number"/>
-				<input type="text" name="muform_fields[limit_num][]" placeholder="limit_num"/>
+				<input type="text" name="muform_fields[limit_num][]" placeholder="limit_num" style="width:80px;"/>
 				<input type="text" name="muform_fields[require_msg][]" placeholder="require_msg"/>
 				<input type="text" name="muform_fields[export_title][]" placeholder="export_title"/>
 			</div>
@@ -311,7 +312,7 @@ class Mu_Forms_Admin {
 			), 'https://www.google.com/recaptcha/api/siteverify' ) 
 		);
 		if ( is_wp_error( $response ) || empty( $response['body'] ) || ! ( $json = json_decode( $response['body'] ) ) || ! $json->success ) {
-			$msg = 'reCaptcha 驗證失敗，請勾選 "我不是機器人" 並通過驗證。';
+			$msg = __('Robot verification failed, please try again.', $this->plugin_name); 
 		}else{
 			$ary_name = $muform_fields['name'];
 			$ary_require = $muform_fields['require'];
@@ -330,47 +331,7 @@ class Mu_Forms_Admin {
 					'require_msg' => $ary_require_msg[$i]
 				);
 			}
-			// $legal_input_names = array(
-			// 	'invoice_en' => array(
-			// 		'name' => '發票前 2 碼',
-			// 		'require' => true,
-			// 		'type' => 'alphabet',
-			// 		'limit_num' => 2,
-			// 		'require_msg' => '請務必填寫。'
-			// 	), 
-			// 	'invoice_num' => array(
-			// 		'name' => '發票後 8 碼',
-			// 		'require' => true,
-			// 		'type' => 'number',
-			// 		'limit_num' => 8,
-			// 		'require_msg' => '請務必填寫。'
-			// 	), 
-			// 	'user_name' => array(
-			// 		'name' => '姓名',
-			// 		'require' => false,
-			// 		'require_msg' => '請務必填寫。'
-			// 	), 
-			// 	'user_mobile' => array(
-			// 		'name' => '手機',
-			// 		'require' => true,
-			// 		'require_msg' => '請務必填寫。'
-			// 	), 
-			// 	'agree1' => array(
-			// 		'name' => '同意抽獎活動辦法',
-			// 		'require' => true,
-			// 		'require_msg' => '請務必勾選。'
-			// 	), 
-			// 	'agree2' => array(
-			// 		'name' => '同意個資蒐集',
-			// 		'require' => true,
-			// 		'require_msg' => '請務必勾選。'
-			// 	), 
-			// 	'agree3'=> array(
-			// 		'name' => '同意作為會員資料修正',
-			// 		'require' => true,
-			// 		'require_msg' => '請務必勾選。'
-			// 	)
-			// );
+
 			$msg = '';
 			// validation
 			foreach ($legal_input_names as $input_name => $input_set) {
@@ -378,7 +339,7 @@ class Mu_Forms_Admin {
 				
 				// required fields is not filled
 				if ($input_set['require'] === 'true' && !(isset($inputs[$input_name]) && $inputs[$input_name])) {
-					$msg .= "欄位「{$input_set['name']}」{$input_set['require_msg']} \n";
+					$msg .= sprintf( esc_html__( "The field 「%s」 %s", $this->plugin_name ), $input_set['name'], $input_set['require_msg'])."\n";
 					$verify_err = true; //error
 				}
 
@@ -386,26 +347,26 @@ class Mu_Forms_Admin {
 					$input_value = sanitize_text_field($inputs[$input_name]);
 					if ($input_set['require'] === 'true') {
 						if (empty($input_value)) {
-							$msg .= "欄位「{$input_set['name']}」{$input_set['require_msg']} \n";
+							$msg .= sprintf( esc_html__( "The field 「%s」 %s", $this->plugin_name ), $input_set['name'], $input_set['require_msg'])."\n";
 							$verify_err = true; //error
 						}
 						if (!empty($input_set['limit_num'])) {
 							$limit_num = intval($input_set['limit_num']);
 							if (strlen($input_value) !== $limit_num) {
-								$msg .= "欄位「{$input_set['name']}」輸入數量不正確。 \n";
+								$msg .= sprintf( esc_html__( "The field 「%s」 has wrong number of digits.", $this->plugin_name ), $input_set['name'])."\n";
 								$verify_err = true; //error
 							}
 						}
 						if (!empty($input_set['type'])) {
 							if ($input_set['type'] == 'alphabet') {
 								if (!ctype_alpha($input_value)) {
-									$msg .= "欄位「{$input_set['name']}」請輸入英文。 \n";
+									$msg .= sprintf( esc_html__( "The field 「%s」should be in alphabet format.", $this->plugin_name ), $input_set['name'])."\n";
 									$verify_err = true; //error
 								}
 							}
 							if ($input_set['type'] == 'number') {
 								if (!is_numeric($input_value)){
-									$msg .= "欄位「{$input_set['name']}」請輸入數字。 \n";
+									$msg .= sprintf( esc_html__( "The field 「%s」 should be in number format.", $this->plugin_name ), $input_set['name'])."\n";
 									$verify_err = true; //error
 								}
 							}
@@ -430,7 +391,7 @@ class Mu_Forms_Admin {
 					update_post_meta($data_id, 'muform_fd_'.$fd, $val);
 					//$msg .= "post id: {$muform_post->ID} update {$fd} as {$val} \n";
 				}
-				$msg .= '已成功送出資料，感謝您的參與。';
+				$msg .= __('Submit successfully, thank you.');
 			}
 		}
 
@@ -565,7 +526,7 @@ class Mu_Forms_Admin {
 	public function muform_select_box() {
 		?>
         <select name="select_muform" id="select_muform">
-			<option value="0">請選擇</option>
+			<option value="0"><?php _e('Please select', $this->plugin_name);?></option>
 			<?php
 			$args = array(
 				'post_type' => 'muform',
@@ -582,7 +543,7 @@ class Mu_Forms_Admin {
 			endif;
 			?>
         </select>
-		<button type="button" name="export_xls" class="btn_export_xls button button-primary" value="export_xls">Export to XLS</button>
+		<button type="button" name="export_xls" class="btn_export_xls button button-primary" value="export_xls"><?php _e('Export to XLS', $this->plugin_name);?></button>
 	   <?php
 	}
 

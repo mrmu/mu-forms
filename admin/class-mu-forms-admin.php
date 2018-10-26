@@ -288,7 +288,7 @@ class Mu_Forms_Admin {
 		$my_posts = get_posts($args);
 		if (empty($my_posts)) {
 			$rtn_ary['code'] = 0;
-			$rtn_ary['text'] = 'Form slug is illegal.';
+			$rtn_ary['text'] = __('Form slug is illegal.', $this->plugin_name);
 			echo json_encode($rtn_ary, JSON_FORCE_OBJECT);
 			die();
 		}
@@ -297,22 +297,25 @@ class Mu_Forms_Admin {
 		// verify nonce
 		if (!wp_verify_nonce( $inputs['_wpnonce'], 'muform_'.$muform_post->ID )){
 			$rtn_ary['code'] = 0;
-			$rtn_ary['text'] = 'Nonce is illegal.';
+			$rtn_ary['text'] = __('Nonce is illegal, please refresh page.', $this->plugin_name);
 			echo json_encode($rtn_ary, JSON_FORCE_OBJECT);
-			die();			
+			die();
 		}
 
 		$muform_fields = get_post_meta($muform_post->ID, 'muform_fields', true);
 		$google_recaptcha_secret = $muform_fields['google_recap_secret'];
-		// $google_recaptcha_secret = '6LfAo3UUAAAAAPKN6mU6ZEUlgrSJ4d9D3DHdaKIi';
 		$response = wp_remote_get( add_query_arg( array(
 			'secret'   => $google_recaptcha_secret,
 			'response' => isset( $inputs['g-recaptcha-response'] ) ? $inputs['g-recaptcha-response'] : '',
 			'remoteip' => isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
 			), 'https://www.google.com/recaptcha/api/siteverify' ) 
 		);
+		// verify google recaptcha
 		if ( is_wp_error( $response ) || empty( $response['body'] ) || ! ( $json = json_decode( $response['body'] ) ) || ! $json->success ) {
-			$msg = __('Robot verification failed, please try again.', $this->plugin_name); 
+			$rtn_ary['code'] = 0;
+			$rtn_ary['text'] = __('Robot verification failed, please try again.', $this->plugin_name); 
+			echo json_encode($rtn_ary, JSON_FORCE_OBJECT);
+			die();
 		}else{
 			$ary_name = $muform_fields['name'];
 			$ary_require = $muform_fields['require'];
@@ -350,25 +353,31 @@ class Mu_Forms_Admin {
 							$msg .= sprintf( esc_html__( "The field 「%s」 %s", $this->plugin_name ), $input_set['name'], $input_set['require_msg'])."\n";
 							$verify_err = true; //error
 						}
-						if (!empty($input_set['limit_num'])) {
-							$limit_num = intval($input_set['limit_num']);
-							if (strlen($input_value) !== $limit_num) {
-								$msg .= sprintf( esc_html__( "The field 「%s」 has wrong number of digits.", $this->plugin_name ), $input_set['name'])."\n";
+					}
+					if (!empty($input_set['limit_num'])) {
+						$limit_num = intval($input_set['limit_num']);
+						if (strlen($input_value) !== $limit_num) {
+							$msg .= sprintf( esc_html__( "The field 「%s」 has wrong number of digits.", $this->plugin_name ), $input_set['name'])."\n";
+							$verify_err = true; //error
+						}
+					}
+					if (!empty($input_set['type'])) {
+						if ($input_set['type'] == 'alphabet') {
+							if (!ctype_alpha($input_value)) {
+								$msg .= sprintf( esc_html__( "The field 「%s」should be in alphabet format.", $this->plugin_name ), $input_set['name'])."\n";
 								$verify_err = true; //error
 							}
 						}
-						if (!empty($input_set['type'])) {
-							if ($input_set['type'] == 'alphabet') {
-								if (!ctype_alpha($input_value)) {
-									$msg .= sprintf( esc_html__( "The field 「%s」should be in alphabet format.", $this->plugin_name ), $input_set['name'])."\n";
-									$verify_err = true; //error
-								}
+						if ($input_set['type'] == 'number') {
+							if (!is_numeric($input_value)){
+								$msg .= sprintf( esc_html__( "The field 「%s」 should be in number format.", $this->plugin_name ), $input_set['name'])."\n";
+								$verify_err = true; //error
 							}
-							if ($input_set['type'] == 'number') {
-								if (!is_numeric($input_value)){
-									$msg .= sprintf( esc_html__( "The field 「%s」 should be in number format.", $this->plugin_name ), $input_set['name'])."\n";
-									$verify_err = true; //error
-								}
+						}
+						if ($input_set['type'] == 'email') {
+							if (!is_email($input_value)){
+								$msg .= sprintf( esc_html__( "The field 「%s」 should be in e-mail format.", $this->plugin_name ), $input_set['name'])."\n";
+								$verify_err = true; //error
 							}
 						}
 					}

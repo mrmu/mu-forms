@@ -1,39 +1,29 @@
 (function( $ ) {
 	'use strict';
 
-	$(function(){
-		$(document).on('submit', 'form.muform', function(){
-			if (confirm('確定送出資料嗎？')) {
-				$('form.muform input[type=submit]').prop('disabled', true);
-				$.ajax({
-					async: true, //mimic POST use false
-					type: 'POST',
-					url: muforms.ajaxurl,
-					data: {
-						action: 'ajax_submit_func',
-						inputs: $(this).serialize(),
-					},
-					dataType: 'JSON',
-					success: function(res) {
-						alert(res.text);
-						if (res.code == '0'){
-							//do sth when err...
-						}
-						if (res.code == '1'){
-							$('form.muform')[0].reset();
-						}
-						grecaptcha.reset();
-						$('form.muform input[type=submit]').prop('disabled', false);
-					},
-					error:function (xhr, ajaxOptions, thrownError){
-						alert(ajaxOptions+':'+thrownError);
-						grecaptcha.reset();
-						$('form.muform input[type=submit]').prop('disabled', false);
-					}
-				});	
+	document.do_muform_submit = function(muform, callback) {
+		$.ajax({
+			async: true,
+			type: 'POST',
+			url: muforms.ajaxurl,
+			data: {
+				action: 'muform_ajax_submit_func',
+				inputs: $(muform).serialize(),
+			},
+			dataType: 'JSON',
+			success: function(res) {
+				callback('success', res);
+				grecaptcha.reset();
+			},
+			error:function (xhr, ajaxOptions, thrownError){
+				callback('error', ajaxOptions+':'+thrownError);
+				grecaptcha.reset();
 			}
-			return false;
 		});
+	}
+
+	$(function(){
+
 	});
 
 })( jQuery );

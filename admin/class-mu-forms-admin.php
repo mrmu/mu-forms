@@ -104,7 +104,11 @@ class Mu_Forms_Admin {
 
 	public function export_to_xls_check() {
 		if (is_admin() && isset($_GET['export_xls']) && $_GET['export_xls']) {
-			
+			$s_date = sanitize_text_field($_GET['s_date']);
+			$e_date = sanitize_text_field($_GET['e_date']);
+			$s_date = date('Y-m-d H:i:s', strtotime($s_date.'00:00:00'));
+			$e_date = date('Y-m-d H:i:s', strtotime($e_date.'23:59:59'));
+
 			$nonce = $_REQUEST['_wpnonce'];
 			if (!wp_verify_nonce($nonce, 'muform_export_xls') ) {
 				wp_die('Illegal operation! Go back to <a href="'.admin_url('options-general.php?page=mu-forms').'">Mu Forms</a>.');
@@ -144,11 +148,17 @@ class Mu_Forms_Admin {
 
 					// get muform data by title (muform id)
 					global $wpdb;
+					// echo "SELECT ID, post_date FROM $wpdb->posts WHERE 
+					// 	post_title = '$muform_id' AND post_type = 'muform_data' AND post_status = 'private' AND post_date Between '$s_date' AND '$e_date'";
+
 					$rst = $wpdb->get_results( 
 						$wpdb->prepare( 
-							"SELECT ID, post_date FROM $wpdb->posts WHERE post_title = %s AND post_type = %s AND post_status = 'private' ", 
+							"SELECT ID, post_date FROM $wpdb->posts WHERE 
+								post_title = %s AND post_type = %s AND post_status = 'private' AND post_date Between '%s' AND '%s'", 
 							$muform_id, 
-							'muform_data'
+							'muform_data',
+							$s_date,
+							$e_date
 						)
 					);
 					$i = 2;
@@ -533,8 +543,17 @@ class Mu_Forms_Admin {
 	// Controls render
 
 	public function muform_select_box() {
+		$from_date = date('Y-m-d', strtotime(current_time('mysql').'- 7 days'));
+		$to_date = date('Y-m-d', strtotime(current_time('mysql')));
 		?>
-        <select name="select_muform" id="select_muform">
+		<div>
+			<?php _e('Start Date：', $this->plugin_name); ?>
+			<input type="date" name="export_s_date" id="export_s_date" value="<?php echo $from_date;?>"> ～
+			<?php _e('End Date：', $this->plugin_name); ?>
+			<input type="date" name="export_e_date" id="export_e_date" value="<?php echo $to_date;?>">
+		</div>
+
+		<select name="select_muform" id="select_muform">
 			<option value="0"><?php _e('Please select', $this->plugin_name);?></option>
 			<?php
 			$args = array(

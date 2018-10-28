@@ -32,8 +32,11 @@
 
 		$(document).on('click', '.btn_export_xls', function(e) {
 			var muform_id = $('#select_muform').val();
+			var export_s_date = $('#export_s_date').val();
+			var export_e_date = $('#export_e_date').val();
+			var open_url = muforms_adm.adm_muform_url+'&export_xls='+muform_id+'&s_date='+export_s_date+'&e_date='+export_e_date;
 			if (muform_id != 0) {
-				var wnd = window.open(muforms_adm.adm_muform_url+'&export_xls='+muform_id);
+				var wnd = window.open(open_url);
 				// setTimeout(function() {
 				// 	wnd.close();
 				// }, 6000);

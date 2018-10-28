@@ -21,27 +21,23 @@ To help users build forms quickly and then export the data input from forms in x
 2. Please use document.do_muform_submit('your_muform', callback(result, response){...}) to submit form data to admin and get responses. For example, if the form class is "muform":
 `
 $(document).on('submit', 'form.muform', function(e){
-	e.preventDefault();
-	if (confirm('Are you sure?')) {
-		$('form.muform input[type=submit]').prop('disabled', true);
-		
-		document.do_muform_submit('form.muform', function(result, res){
-			alert(res.text);
-			if (result === 'success') {						
-				if (res.code == '0'){
-					// do sth when data err...
-				}
-				if (res.code == '1'){
-					// reset form fields
-					$('form.muform')[0].reset();
-				}
-			}else if(result === 'error') {
-				// do sth when ajax err ...
-			}
-			$('form.muform input[type=submit]').prop('disabled', false);
-		});
-	}
-	return false;
+    e.preventDefault();
+    if (confirm('Are you sure?')) {
+        $('form.muform input[type=submit]').prop('disabled', true);	
+        document.do_muform_submit('form.muform', function(result, res){
+        alert(res.text);
+        if (result === 'success') {						
+        if (res.code == '0'){
+            // do sth when data err...
+        }
+        if (res.code == '1'){
+            // reset form fields
+            $('form.muform')[0].reset();
+        }
+    }else if(result === 'error') {
+        // do sth when ajax err ...
+    }
+    $('form.muform input[type=submit]').prop('disabled', false);
 });
 `
 

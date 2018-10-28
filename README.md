@@ -2,10 +2,10 @@
 To help users build forms quickly and then export the data input from forms in xls format.
 
 ## Install
-1. Download plugin.
+1. Download this plugin.
 2. `$ cd /your-wp-site-path/wp-content/plugins/mu-forms`
 3. `$ composer install`
-4. Activate plugin in admin.
+4. Activate plugin 'Mu Forms' in plugins of admin.
 
 ## Usage
 

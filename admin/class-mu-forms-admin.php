@@ -106,8 +106,6 @@ class Mu_Forms_Admin {
 		if (is_admin() && isset($_GET['export_xls']) && $_GET['export_xls']) {
 			$s_date = sanitize_text_field($_GET['s_date']);
 			$e_date = sanitize_text_field($_GET['e_date']);
-			$s_date = date('Y-m-d H:i:s', strtotime($s_date.'00:00:00'));
-			$e_date = date('Y-m-d H:i:s', strtotime($e_date.'23:59:59'));
 
 			$nonce = $_REQUEST['_wpnonce'];
 			if (!wp_verify_nonce($nonce, 'muform_export_xls') ) {
@@ -118,7 +116,7 @@ class Mu_Forms_Admin {
 				if ($muform_id > 0) {
 					//TBD: max columns limit: 26
 					$col_name = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-					$export_filename = 'muform_export_'.date('YmdHis', time()).'.xls';
+					$export_filename = get_the_title($muform_id).'('.$s_date.'-To-'.$e_date.').xls';
 					$spreadsheet = new Spreadsheet(); 
 					$Excel_writer = new Xls($spreadsheet); 
 	
@@ -126,6 +124,9 @@ class Mu_Forms_Admin {
 					$activeSheet = $spreadsheet->getActiveSheet();
 					$activeSheet->setTitle("MuForm Data");  //設定標題
 					$activeSheet->getDefaultColumnDimension()->setWidth(20);
+
+					$s_date = date('Y-m-d H:i:s', strtotime($s_date.'00:00:00'));
+					$e_date = date('Y-m-d H:i:s', strtotime($e_date.'23:59:59'));
 
 					// get mu form fields' name
 					$muform_fd_names = array();

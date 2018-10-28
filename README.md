@@ -19,14 +19,15 @@ To help users build forms quickly and then export the data input from forms in x
 ### Frontend Form
 1. Please build the frontend data validation by yourself.
 2. Please use document.do_muform_submit('your_muform', callback(result, response){...}) to submit form data to admin and get responses. For example, if the form class is "muform":
-`
+
+```javascript
 $(document).on('submit', 'form.muform', function(e){
     e.preventDefault();
     if (confirm('Are you sure?')) {
-        $('form.muform input[type=submit]').prop('disabled', true);	
+        $('form.muform input[type=submit]').prop('disabled', true);
         document.do_muform_submit('form.muform', function(result, res){
         alert(res.text);
-        if (result === 'success') {						
+        if (result === 'success') {
         if (res.code == '0'){
             // do sth when data err...
         }
@@ -39,7 +40,7 @@ $(document).on('submit', 'form.muform', function(e){
     }
     $('form.muform input[type=submit]').prop('disabled', false);
 });
-`
+```
 
 ### Export submitted data of Mu Form
 Please go to admin "Settings > Mu Form" to export to XLS.

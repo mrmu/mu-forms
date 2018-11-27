@@ -161,7 +161,8 @@ class Mu_Forms {
 		$this->loader->add_action( 'save_post', $plugin_admin, 'save_mf_metabox' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
 		$this->loader->add_action( 'wp_ajax_muform_ajax_submit_func', $plugin_admin, 'ajax_submit_func');
-		$this->loader->add_action( 'wp_ajax_nopriv_muform_ajax_submit_func', $plugin_admin, 'ajax_submit_func'); 
+		$this->loader->add_action( 'wp_ajax_nopriv_muform_ajax_submit_func', $plugin_admin, 'ajax_submit_func');
+		$this->loader->add_action( 'wp_ajax_muform_load_export_html', $plugin_admin, 'ajax_load_export_html_func');
 	}
 
 	/**

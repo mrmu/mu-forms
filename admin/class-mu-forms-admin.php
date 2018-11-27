@@ -100,6 +100,81 @@ class Mu_Forms_Admin {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/mu-forms-admin.js', array( 'jquery' ), filemtime( plugin_dir_path(__FILE__) . 'js/mu-forms-admin.js'), false );
 		wp_localize_script( $this->plugin_name, 'muforms_adm', array('adm_muform_url' => wp_nonce_url(admin_url('options-general.php?page=mu-forms&tab=options'), 'muform_export_xls') ) );
+		wp_localize_script( $this->plugin_name, 'muforms_adm', array('adm_muform_url' => wp_nonce_url(admin_url('options-general.php?page=mu-forms&tab=options'), 'muform_export_html') ) );
+		wp_localize_script( $this->plugin_name, 'muforms_adm', array('ajax_url' => admin_url( 'admin-ajax.php' )) );
+	}
+
+	public function ajax_load_export_html_func() {
+		
+		$s_date = sanitize_text_field($_POST['s_date']);
+		$e_date = sanitize_text_field($_POST['e_date']);
+		$muform_id = absint($_POST['muform_id']);
+		$rtn_ary = array('code'=>1, 'text'=>'');
+		$content = '';
+		if (current_user_can('manage_options')) {
+			if ($muform_id > 0) {
+				$content .= '<table>';
+				$content .= '<tr>';
+				// get muform data by title (muform id)
+				global $wpdb;
+		
+				// $muform_id = 15;
+				// $s_date = '2018-11-19';
+				// $e_date = '2018-11-21';
+		
+				// get mu form fields' name
+				$muform_fd_names = array();
+				$muform_fd_titles = array();
+				$muform_fields = get_post_meta($muform_id, 'muform_fields', true);
+				
+				if (!empty($muform_fields['name']) && is_array($muform_fields['name'])) {
+					$i = 0;
+					foreach ($muform_fields['name'] as $fd_name) {
+						$fd_title = $muform_fields['export_title'][$i];
+						if ($fd_title) {
+							$content .= '<th>'.$fd_title.'</th>';
+							$muform_fd_names[] = $fd_name;
+							$muform_fd_titles[] = $fd_title;
+						}
+						$i++;
+					}
+					// last column
+					$content .= '<th>Date</th>';
+				}
+				$content .= '</tr>';
+		
+				$rst = $wpdb->get_results( 
+					$wpdb->prepare( 
+						"SELECT ID, post_date FROM $wpdb->posts WHERE 
+							post_title = %s AND post_type = %s AND post_status = 'private' AND post_date Between '%s' AND '%s'", 
+						$muform_id, 
+						'muform_data',
+						$s_date,
+						$e_date
+					)
+				);
+				$i = 2;
+		
+				foreach ( $rst as $row ) {
+					$j = 0;
+					$muform_data_id = $row->ID;
+					$muform_data_date = $row->post_date;
+					$content .= '<tr>';
+					foreach ($muform_fd_names as $fd_name) {
+						$fd_val = get_post_meta($muform_data_id, 'muform_fd_'.$fd_name, true);
+						$content .= '<td>'.$fd_val."</td>";
+						$j++;
+					}
+					$content .= '<td>'.$muform_data_date.'</td>';
+					$content .= '</tr>';
+					$i++;
+				}
+				$content .= '</table>';
+			}
+		}
+		$rtn_ary['text'] = $content;
+		echo json_encode($rtn_ary, JSON_FORCE_OBJECT);
+		die();
 	}
 
 	public function export_to_xls_check() {
@@ -182,7 +257,6 @@ class Mu_Forms_Admin {
 					header('Cache-Control: max-age=0');
 					$Excel_writer->save('php://output');
 				}
-
 			}
 		}
 	}
@@ -573,6 +647,8 @@ class Mu_Forms_Admin {
 			?>
         </select>
 		<button type="button" name="export_xls" class="btn_export_xls button button-primary" value="export_xls"><?php _e('Export to XLS', $this->plugin_name);?></button>
+		<button type="button" name="export_html" class="btn_export_html button button-primary" value="export_html"><?php _e('Export to HTML', $this->plugin_name);?></button>
+		<div class="display_html"></div>
 	   <?php
 	}
 

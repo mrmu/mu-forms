@@ -30,6 +30,42 @@
 			x--;
 		});
 
+		$(document).on('click', '.btn_export_html', function(e) {
+			var muform_id = $('#select_muform').val();
+			var export_s_date = $('#export_s_date').val();
+			var export_e_date = $('#export_e_date').val();
+
+			$(function(){
+				$.ajax({
+					async: true, //mimic POST use false
+					type: 'POST',
+					url: muforms_adm.ajax_url,
+					data: {
+						action: 'muform_load_export_html',
+						muform_id: muform_id,
+						s_date: export_s_date,
+						e_date: export_e_date
+					},
+					dataType: 'JSON',
+					success: function(res) {
+						if (res.code=='1'){
+							//do sth when success...
+							$('.display_html').html(res.text);
+						}
+					},
+					error:function (xhr, ajaxOptions, thrownError){
+						alert(ajaxOptions+':'+thrownError);
+					}
+				});	
+			});
+			
+			// var open_url = muforms_adm.adm_muform_url+'&export_html='+muform_id+'&s_date='+export_s_date+'&e_date='+export_e_date;
+			// if (muform_id != 0) {
+			// 	var wnd = window.open(open_url);
+			// }
+			return false;
+		});
+
 		$(document).on('click', '.btn_export_xls', function(e) {
 			var muform_id = $('#select_muform').val();
 			var export_s_date = $('#export_s_date').val();

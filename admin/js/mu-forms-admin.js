@@ -34,30 +34,33 @@
 			var muform_id = $('#select_muform').val();
 			var export_s_date = $('#export_s_date').val();
 			var export_e_date = $('#export_e_date').val();
-
-			$(function(){
-				$.ajax({
-					async: true, //mimic POST use false
-					type: 'POST',
-					url: muforms_adm.ajax_url,
-					data: {
-						action: 'muform_load_export_html',
-						muform_id: muform_id,
-						s_date: export_s_date,
-						e_date: export_e_date
-					},
-					dataType: 'JSON',
-					success: function(res) {
-						if (res.code=='1'){
-							//do sth when success...
-							$('.display_html').html(res.text);
+			if (muform_id != 0) {
+				$(function(){
+					$.ajax({
+						async: true, //mimic POST use false
+						type: 'POST',
+						url: muforms_adm.ajax_url,
+						data: {
+							action: 'muform_load_export_html',
+							muform_id: muform_id,
+							s_date: export_s_date,
+							e_date: export_e_date
+						},
+						dataType: 'JSON',
+						success: function(res) {
+							if (res.code=='1'){
+								//do sth when success...
+								$('.display_html').html(res.text);
+							}
+						},
+						error:function (xhr, ajaxOptions, thrownError){
+							alert(ajaxOptions+':'+thrownError);
 						}
-					},
-					error:function (xhr, ajaxOptions, thrownError){
-						alert(ajaxOptions+':'+thrownError);
-					}
-				});	
-			});
+					});	
+				});
+			}else{
+				alert(muforms_adm.text_plz_select);
+			}
 			
 			// var open_url = muforms_adm.adm_muform_url+'&export_html='+muform_id+'&s_date='+export_s_date+'&e_date='+export_e_date;
 			// if (muform_id != 0) {
@@ -76,6 +79,8 @@
 				// setTimeout(function() {
 				// 	wnd.close();
 				// }, 6000);
+			}else{
+				alert(muforms_adm.text_plz_select);
 			}
 			return false;
 		});

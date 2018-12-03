@@ -99,9 +99,15 @@ class Mu_Forms_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/mu-forms-admin.js', array( 'jquery' ), filemtime( plugin_dir_path(__FILE__) . 'js/mu-forms-admin.js'), false );
-		wp_localize_script( $this->plugin_name, 'muforms_adm', array('adm_muform_url' => wp_nonce_url(admin_url('options-general.php?page=mu-forms&tab=options'), 'muform_export_xls') ) );
-		wp_localize_script( $this->plugin_name, 'muforms_adm', array('adm_muform_url' => wp_nonce_url(admin_url('options-general.php?page=mu-forms&tab=options'), 'muform_export_html') ) );
-		wp_localize_script( $this->plugin_name, 'muforms_adm', array('ajax_url' => admin_url( 'admin-ajax.php' )) );
+		wp_localize_script( 
+			$this->plugin_name, 
+			'muforms_adm', 
+			array(
+				'adm_muform_url' => wp_nonce_url(admin_url('options-general.php?page=mu-forms'), 'muform_export_xls'),
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'text_plz_select' => esc_html__( 'Please select one form.', $this->plugin_name ),
+			) 
+		);
 	}
 
 	public function ajax_load_export_html_func() {

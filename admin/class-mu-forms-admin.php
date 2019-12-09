@@ -319,6 +319,13 @@ class Mu_Forms_Admin {
 			</div>
 		</div>
 		<?php
+		if (!empty($post->post_name)) { 
+			?>
+			<div class="shortcode-usage">
+				<?php printf(__('Please use <span>%s</span> to display the form.', $this->plugin_name), '[muform slug='.$post->post_name.']'); ?>
+			</div>
+			<?php
+		}
 	}
 
 	public function save_mf_metabox( $post_id ) {

@@ -1,4 +1,6 @@
 # Mu Forms
+
+此外掛可協助建立收集資料用的表單，並在後台匯出 XLS 檔。
 To help users build forms quickly and then export the data input from forms in xls format.
 
 ## Install
@@ -17,6 +19,7 @@ To help users build forms quickly and then export the data input from forms in x
 4. Fill fields settings.
 
 ### Frontend Form
+1. Use shortcode [muform slug=mu-form-slug] to display form.
 1. Please build the frontend data validation by yourself.
 2. Please use document.do_muform_submit('your_muform', callback(result, response){...}) to submit form data to admin and get responses. For example, if the form class is "muform":
 

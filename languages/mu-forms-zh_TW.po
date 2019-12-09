@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Mu Forms\n"
-"POT-Creation-Date: 2018-12-03 11:59+0800\n"
-"PO-Revision-Date: 2018-12-03 11:59+0800\n"
+"POT-Creation-Date: 2019-12-09 17:40+0800\n"
+"PO-Revision-Date: 2019-12-09 17:42+0800\n"
 "Last-Translator: Audi Lu <mrmu@mrmu.com.tw>\n"
 "Language-Team: Audi Lu <mrmu@mrmu.com.tw>\n"
 "Language: zh_TW\n"
@@ -41,86 +41,91 @@ msgstr "欄位設定："
 msgid "Add one field setting"
 msgstr "新增欄位設定"
 
-#: admin/class-mu-forms-admin.php:382
+#: admin/class-mu-forms-admin.php:322
+#, php-format
+msgid "Please use <span>%s</span> to display the form."
+msgstr "請使用 <span>%s</span> 來顯示此表單。"
+
+#: admin/class-mu-forms-admin.php:384
 msgid "Form slug is illegal."
 msgstr "指定的 Mu Form 代稱錯誤。"
 
-#: admin/class-mu-forms-admin.php:391
+#: admin/class-mu-forms-admin.php:393
 msgid "Nonce is illegal, please refresh page."
 msgstr "瀏覽階段過期，請重整頁面。"
 
-#: admin/class-mu-forms-admin.php:407
+#: admin/class-mu-forms-admin.php:409
 msgid "Robot verification failed, please try again."
 msgstr "驗證失敗，請勾選 “我不是機器人” 並通過驗證。"
 
-#: admin/class-mu-forms-admin.php:436 admin/class-mu-forms-admin.php:444
+#: admin/class-mu-forms-admin.php:438 admin/class-mu-forms-admin.php:446
 #, php-format
 msgid "The field 「%s」 %s"
 msgstr "欄位「%s」 %s"
 
-#: admin/class-mu-forms-admin.php:451
+#: admin/class-mu-forms-admin.php:453
 #, php-format
 msgid "The field 「%s」 has wrong number of digits."
 msgstr "欄位 「%s」 輸入位數錯誤。"
 
-#: admin/class-mu-forms-admin.php:458
+#: admin/class-mu-forms-admin.php:460
 #, php-format
 msgid "The field 「%s」should be in alphabet format."
 msgstr "欄位 「%s」必須是英文格式。"
 
-#: admin/class-mu-forms-admin.php:464
+#: admin/class-mu-forms-admin.php:466
 #, php-format
 msgid "The field 「%s」 should be in number format."
 msgstr "欄位 「%s」 必須是數字格式。"
 
-#: admin/class-mu-forms-admin.php:470
+#: admin/class-mu-forms-admin.php:472
 #, php-format
 msgid "The field 「%s」 should be in e-mail format."
 msgstr "欄位 「%s」 必須是 E-mail 格式。"
 
-#: admin/class-mu-forms-admin.php:494
+#: admin/class-mu-forms-admin.php:496
 msgid "Submit successfully, thank you."
 msgstr "已成功送出資料，感謝您的參與。"
 
 #. Plugin Name of the plugin/theme
-#: admin/class-mu-forms-admin.php:505 admin/class-mu-forms-admin.php:506
-#: admin/class-mu-forms-admin.php:530
+#: admin/class-mu-forms-admin.php:507 admin/class-mu-forms-admin.php:508
+#: admin/class-mu-forms-admin.php:532
 msgid "Mu Forms"
 msgstr "Mu Forms"
 
-#: admin/class-mu-forms-admin.php:532
+#: admin/class-mu-forms-admin.php:534
 msgid "General"
 msgstr "一般"
 
-#: admin/class-mu-forms-admin.php:557
+#: admin/class-mu-forms-admin.php:559
 msgid "Reset this tab controls to defaults"
 msgstr "重置設定"
 
-#: admin/class-mu-forms-admin.php:573
+#: admin/class-mu-forms-admin.php:575
 msgid "General settings"
 msgstr "一般設定"
 
-#: admin/class-mu-forms-admin.php:588
+#: admin/class-mu-forms-admin.php:590
 msgid "Export submitted data of Mu Form"
 msgstr "匯出提交給 Mu Form 的資料"
 
-#: admin/class-mu-forms-admin.php:631
+#: admin/class-mu-forms-admin.php:633
 msgid "Start Date："
 msgstr "開始日期："
 
-#: admin/class-mu-forms-admin.php:633
+#: admin/class-mu-forms-admin.php:635
 msgid "End Date："
 msgstr "結束日期："
 
-#: admin/class-mu-forms-admin.php:638
+#: admin/class-mu-forms-admin.php:640
 msgid "Please select"
 msgstr "請選擇"
 
-#: admin/class-mu-forms-admin.php:655
+#: admin/class-mu-forms-admin.php:657
 msgid "Export to XLS"
 msgstr "匯出成 XLS"
 
-#: admin/class-mu-forms-admin.php:656
+#: admin/class-mu-forms-admin.php:658
 msgid "Export to HTML"
 msgstr "匯出成 HTML"
 

@@ -99,19 +99,19 @@ class Mu_Forms_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/mu-forms-admin.js', array( 'jquery' ), filemtime( plugin_dir_path(__FILE__) . 'js/mu-forms-admin.js'), false );
-		wp_localize_script( 
-			$this->plugin_name, 
-			'muforms_adm', 
+		wp_localize_script(
+			$this->plugin_name,
+			'muforms_adm',
 			array(
 				'adm_muform_url' => wp_nonce_url(admin_url('options-general.php?page=mu-forms'), 'muform_export_xls'),
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'text_plz_select' => esc_html__( 'Please select one form.', $this->plugin_name ),
-			) 
+			)
 		);
 	}
 
 	public function ajax_load_export_html_func() {
-		
+
 		$s_date = sanitize_text_field($_POST['s_date']);
 		$e_date = sanitize_text_field($_POST['e_date']);
 		$muform_id = absint($_POST['muform_id']);
@@ -123,16 +123,16 @@ class Mu_Forms_Admin {
 				$content .= '<tr>';
 				// get muform data by title (muform id)
 				global $wpdb;
-		
+
 				// $muform_id = 15;
 				// $s_date = '2018-11-19';
 				// $e_date = '2018-11-21';
-		
+
 				// get mu form fields' name
 				$muform_fd_names = array();
 				$muform_fd_titles = array();
 				$muform_fields = get_post_meta($muform_id, 'muform_fields', true);
-				
+
 				if (!empty($muform_fields['name']) && is_array($muform_fields['name'])) {
 					$i = 0;
 					foreach ($muform_fields['name'] as $fd_name) {
@@ -148,19 +148,19 @@ class Mu_Forms_Admin {
 					$content .= '<th>Date</th>';
 				}
 				$content .= '</tr>';
-		
-				$rst = $wpdb->get_results( 
-					$wpdb->prepare( 
-						"SELECT ID, post_date FROM $wpdb->posts WHERE 
-							post_title = %s AND post_type = %s AND post_status = 'private' AND post_date Between '%s' AND '%s'", 
-						$muform_id, 
+
+				$rst = $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT ID, post_date FROM $wpdb->posts WHERE
+							post_title = %s AND post_type = %s AND post_status = 'private' AND post_date Between '%s' AND '%s'",
+						$muform_id,
 						'muform_data',
 						$s_date,
 						$e_date
 					)
 				);
 				$i = 2;
-		
+
 				foreach ( $rst as $row ) {
 					$j = 0;
 					$muform_data_id = $row->ID;
@@ -198,9 +198,9 @@ class Mu_Forms_Admin {
 					//TBD: max columns limit: 26
 					$col_name = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 					$export_filename = get_the_title($muform_id).'('.$s_date.'-To-'.$e_date.').xls';
-					$spreadsheet = new Spreadsheet(); 
-					$Excel_writer = new Xls($spreadsheet); 
-	
+					$spreadsheet = new Spreadsheet();
+					$Excel_writer = new Xls($spreadsheet);
+
 					$spreadsheet->setActiveSheetIndex(0);
 					$activeSheet = $spreadsheet->getActiveSheet();
 					$activeSheet->setTitle("MuForm Data");  //設定標題
@@ -230,14 +230,14 @@ class Mu_Forms_Admin {
 
 					// get muform data by title (muform id)
 					global $wpdb;
-					// echo "SELECT ID, post_date FROM $wpdb->posts WHERE 
+					// echo "SELECT ID, post_date FROM $wpdb->posts WHERE
 					// 	post_title = '$muform_id' AND post_type = 'muform_data' AND post_status = 'private' AND post_date Between '$s_date' AND '$e_date'";
 
-					$rst = $wpdb->get_results( 
-						$wpdb->prepare( 
-							"SELECT ID, post_date FROM $wpdb->posts WHERE 
-								post_title = %s AND post_type = %s AND post_status = 'private' AND post_date Between '%s' AND '%s'", 
-							$muform_id, 
+					$rst = $wpdb->get_results(
+						$wpdb->prepare(
+							"SELECT ID, post_date FROM $wpdb->posts WHERE
+								post_title = %s AND post_type = %s AND post_status = 'private' AND post_date Between '%s' AND '%s'",
+							$muform_id,
 							'muform_data',
 							$s_date,
 							$e_date
@@ -259,7 +259,7 @@ class Mu_Forms_Admin {
 					}
 
 					header('Content-Type: application/vnd.ms-excel;charset=UTF-8');
-					header('Content-Disposition: attachment;filename="'.$export_filename.'"'); 
+					header('Content-Disposition: attachment;filename="'.$export_filename.'"');
 					header('Cache-Control: max-age=0');
 					$Excel_writer->save('php://output');
 				}
@@ -325,8 +325,7 @@ class Mu_Forms_Admin {
 		// Bail if we're doing an auto save
 		if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
 
-		// if our current user can't edit this post, bail
-		if( !current_user_can( 'edit_post' ) ) return;
+		if( !current_user_can( 'manage_options' ) ) return;
 
 		// // now we can actually save the data
 		// $allowed = array(
@@ -339,7 +338,7 @@ class Mu_Forms_Admin {
 		if(isset($_POST['muform_fields'])) {
 			$pre_save_fields = $_POST['muform_fields'];
 			echo sizeof($pre_save_fields['name']);
-			
+
 			$to_save_fields = array();
 			if (isset($pre_save_fields['google_recap_secret']) && $pre_save_fields['google_recap_secret']) {
 				$to_save_fields['google_recap_secret'] = $pre_save_fields['google_recap_secret'];
@@ -399,12 +398,12 @@ class Mu_Forms_Admin {
 			'secret'   => $google_recaptcha_secret,
 			'response' => isset( $inputs['g-recaptcha-response'] ) ? $inputs['g-recaptcha-response'] : '',
 			'remoteip' => isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']
-			), 'https://www.google.com/recaptcha/api/siteverify' ) 
+			), 'https://www.google.com/recaptcha/api/siteverify' )
 		);
 		// verify google recaptcha
 		if ( is_wp_error( $response ) || empty( $response['body'] ) || ! ( $json = json_decode( $response['body'] ) ) || ! $json->success ) {
 			$rtn_ary['code'] = 0;
-			$rtn_ary['text'] = __('Robot verification failed, please try again.', $this->plugin_name); 
+			$rtn_ary['text'] = __('Robot verification failed, please try again.', $this->plugin_name);
 			echo json_encode($rtn_ary, JSON_FORCE_OBJECT);
 			die();
 		}else{
@@ -414,7 +413,7 @@ class Mu_Forms_Admin {
 			$ary_limit_num = $muform_fields['limit_num'];
 			$ary_require_msg = $muform_fields['require_msg'];
 			$ary_export_name = $muform_fields['export_title'];
-	
+
 			$legal_input_names = array();
 			for ($i = 0; $i < sizeof($ary_name); $i++) {
 				$legal_input_names[$ary_name[$i]] = array(
@@ -430,7 +429,7 @@ class Mu_Forms_Admin {
 			// validation
 			foreach ($legal_input_names as $input_name => $input_set) {
 				$verify_err = false;
-				
+
 				// required fields is not filled
 				if ($input_set['require'] === 'true' && !(isset($inputs[$input_name]) && $inputs[$input_name])) {
 					$msg .= sprintf( esc_html__( "The field 「%s」 %s", $this->plugin_name ), $input_set['name'], $input_set['require_msg'])."\n";
@@ -481,8 +480,8 @@ class Mu_Forms_Admin {
 			if ($rtn_ary['code'] === 1) {
 				$data_id = wp_insert_post(
 					array(
-						'post_title' => $muform_post->ID, 
-						'post_type' => 'muform_data', 
+						'post_title' => $muform_post->ID,
+						'post_type' => 'muform_data',
 						'post_status' => 'private',
 						'post_content' => 'Do not remove me unless you know what I am.'
 					)
@@ -501,12 +500,12 @@ class Mu_Forms_Admin {
 	}
 
 	public function add_admin_menu() {
-		add_options_page ( 
-			__('Mu Forms', $this->plugin_name), 
-			__('Mu Forms', $this->plugin_name), 
-			'manage_options', 
-			$this->plugin_name, 
-			array ( $this, 'options_page' ) 
+		add_options_page (
+			__('Mu Forms', $this->plugin_name),
+			__('Mu Forms', $this->plugin_name),
+			'manage_options',
+			$this->plugin_name,
+			array ( $this, 'options_page' )
 		);
 	}
 
@@ -584,13 +583,13 @@ class Mu_Forms_Admin {
 		// );
 
 		add_settings_field(
-			'muform_select', 
-			__('Export submitted data of Mu Form', $this->plugin_name ), 
-			array( $this, 'muform_select_box'), 
-			'muforms_options', 
+			'muform_select',
+			__('Export submitted data of Mu Form', $this->plugin_name ),
+			array( $this, 'muform_select_box'),
+			'muforms_options',
 			'muforms_options_section'
 		);
-		
+
 		// Set default options
 		$options = get_option ( 'muforms_options_settings' );
 		if ( false === $options ) {
@@ -641,12 +640,12 @@ class Mu_Forms_Admin {
 				'post_type' => 'muform',
 				'post_status' => 'publish',
 				'order'    => 'ASC'
-				);              
-			
+				);
+
 			$the_query = new WP_Query( $args );
-			if($the_query->have_posts() ) : 
-				while ( $the_query->have_posts() ) : 
-					$the_query->the_post(); 
+			if($the_query->have_posts() ) :
+				while ( $the_query->have_posts() ) :
+					$the_query->the_post();
 					echo '<option value="'.$the_query->post->ID.'">'.$the_query->post->post_title.'</option>';
 				endwhile;
 			endif;
